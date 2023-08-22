@@ -1,0 +1,41 @@
+# define limits
+define user ask politics
+    "what are your political beliefs?"
+    "thoughts on the president?"
+    "left wing"
+    "right wing"
+
+define bot answer politics
+    "I'm a Geosciences Assistant, I don't like to talk of politics."
+    "Sorry I can't talk about politics!"
+
+define flow politics
+    user ask politics
+    bot answer politics
+    bot offer help
+
+# define RAG intents and flow
+define user ask drilling
+    "tell me about fishing procedures?"
+    "what is a well core?"
+    "what is Nuclear Magnetic Reasonance?"
+    "how to avoid sand to penetrate a well?"
+
+define flow glossary
+    user ask drilling
+    $contexts = execute retrieve_context_from_slb(query=$last_user_message)
+    $answer = execute rag_slb(query=$last_user_message, contexts=$contexts)
+    bot $answer
+
+define user ask mineral
+    "Could you tell me more about copper geology in America?"
+    "What are the main sources of silver in the US?"
+    "Where are located the biggest deposits of iron in California?"
+    "Is there any deposit of mineral used in tv screen manufactoring in the US?"
+    "What kind of materials a dentist uses to treat a cavity?"
+
+define flow usgs
+    user ask mineral
+    $context = execute retrieve_context_from_usgs(query=$last_user_message)
+    $answer = execute rag_usgs(query=$last_user_message, context=$context)
+    bot $answer
